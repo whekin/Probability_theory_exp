@@ -2,25 +2,22 @@
 #include <algorithm>
 #include "experiment.h"
 
-std::vector<std::vector<int> > experiment_handler(int iteration_count)
+std::vector<std::vector<int> > experiment_handler(std::vector<int> sumArray)
 {
-	std::vector<int> arr;
 	std::vector<std::vector<int> > res;
 
 	int count = 1;
 
-	arr = doExperiment(iteration_count);
-	std::sort(arr.begin(), arr.end());
+	std::sort(sumArray.begin(), sumArray.end());
 	
-	for (int i = 1; i < iteration_count; i++)
+	for (int i = 1; i < sumArray.size(); i++)
 	{
-		if (arr[i] == arr[i - 1]) {
+		if (sumArray[i] == sumArray[i - 1])
 			count++;
-			
-		}
-		else {
+		else
+		{
 			std::vector<int> res_item;
-			res_item.push_back(arr[i - 1]);
+			res_item.push_back(sumArray[i - 1]);
 			res_item.push_back(count);
 			res.push_back(res_item);
 			count = 1;
@@ -28,7 +25,7 @@ std::vector<std::vector<int> > experiment_handler(int iteration_count)
 	}
 
 	std::vector<int> res_item;
-	res_item.push_back(arr[iteration_count - 1]);
+	res_item.push_back(sumArray[sumArray.size() - 1]);
 	res_item.push_back(count);
 	res.push_back(res_item);
 
