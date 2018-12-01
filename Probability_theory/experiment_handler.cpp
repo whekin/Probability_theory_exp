@@ -1,6 +1,5 @@
 #include <vector>
 #include <algorithm>
-#include "experiment.h"
 
 std::vector<std::vector<int> > experiment_handler(std::vector<int> sumArray)
 {
