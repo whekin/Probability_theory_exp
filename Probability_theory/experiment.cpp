@@ -1,18 +1,20 @@
 #include <vector>
 #include <random>
 
-std::vector<int> doExperiment(int count, int iterations_count)
+using namespace std;
+
+vector<int> doExperiment(int depth, int iterations_count)
 {
 	int sample_size = 2;
 	int universe_length = 4;
 
-	std::vector<int> universe;
-	std::vector<int> defaultUniverse;
-	std::vector<int> sumArray;
-	std::vector<std::vector<int> > combinationSet;
+	vector<int> universe;
+	vector<int> defaultUniverse;
+	vector<int> sumArray;
+	vector<vector<int> > combinationSet;
 	
-	std::random_device rd;
-	std::mt19937 gen(rd());
+	random_device rd;
+	mt19937 gen(rd());
 
 	for (int i = 0; i < universe_length; i++)
 		defaultUniverse.push_back(i + 1);
@@ -21,7 +23,7 @@ std::vector<int> doExperiment(int count, int iterations_count)
 	{
 		universe = defaultUniverse;
 
-		for (int j = 0; j < count; j++)
+		for (int j = 0; j < depth; j++)
 		{
 			int combinationSum = 0;
 			int firstRandom = gen() % universe.size();

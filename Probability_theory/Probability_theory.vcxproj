@@ -127,12 +127,16 @@
     <ClInclude Include="combinations.h" />
     <ClInclude Include="experiment.h" />
     <ClInclude Include="experiment_handler.h" />
+    <ClInclude Include="Poligon.h" />
+    <ClInclude Include="to_interval.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="combinations.cpp" />
     <ClCompile Include="experiment.cpp" />
     <ClCompile Include="experiment_handler.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Poligon.cpp" />
+    <ClCompile Include="to_interval.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

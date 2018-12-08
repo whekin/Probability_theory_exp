@@ -1,13 +1,15 @@
 #include <vector>
 #include <algorithm>
 
-std::vector<std::vector<int> > experiment_handler(std::vector<int> sumArray)
+using namespace std;
+
+vector<vector<int> > experiment_handler(vector<int> sumArray)
 {
-	std::vector<std::vector<int> > res;
+	vector<vector<int> > res;
 
 	int count = 1;
 
-	std::sort(sumArray.begin(), sumArray.end());
+	sort(sumArray.begin(), sumArray.end());
 	
 	for (int i = 1; i < sumArray.size(); i++)
 	{
@@ -15,7 +17,7 @@ std::vector<std::vector<int> > experiment_handler(std::vector<int> sumArray)
 			count++;
 		else
 		{
-			std::vector<int> res_item;
+			vector<int> res_item;
 			res_item.push_back(sumArray[i - 1]);
 			res_item.push_back(count);
 			res.push_back(res_item);
@@ -23,7 +25,7 @@ std::vector<std::vector<int> > experiment_handler(std::vector<int> sumArray)
 		}
 	}
 
-	std::vector<int> res_item;
+	vector<int> res_item;
 	res_item.push_back(sumArray[sumArray.size() - 1]);
 	res_item.push_back(count);
 	res.push_back(res_item);
