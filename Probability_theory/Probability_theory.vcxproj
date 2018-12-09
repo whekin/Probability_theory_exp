@@ -124,6 +124,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ins.h" />
+    <ClInclude Include="mathAnalytically.h" />
     <ClInclude Include="combinations.h" />
     <ClInclude Include="experiment.h" />
     <ClInclude Include="experiment_handler.h" />

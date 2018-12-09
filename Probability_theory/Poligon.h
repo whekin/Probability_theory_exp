@@ -11,7 +11,6 @@ using namespace std;
 class Poligon
 {
 private:
-	vector<vector<int>> data;
 	
 	sf::RenderWindow& window;
 	sf::VertexArray lines;
@@ -43,6 +42,7 @@ public:
 	bool isInterval = false;
 	float max;
 	int iteration_count;
+	vector<vector<int>> data;
 
 	sf::Color textFillColor = sf::Color::Color(33, 150, 243);
 	sf::Color backColor;

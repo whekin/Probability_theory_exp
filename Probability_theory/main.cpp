@@ -1,31 +1,17 @@
 #include <iostream>
-#include <iomanip>
 #include <vector>
+#include "ins.h"
 #include "experiment.h"
 #include "experiment_handler.h"
 #include "to_interval.h"
+#include "mathAnalytically.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 #include "table/TextTable.h"
 #include "Poligon.h";
-#include <sstream>
 #include <cmath>
 
 using namespace std;
-
-int digit_of_num(int num)
-{	
-	int c = 0;
-	int digit = num;
-
-	while (digit > 0)
-	{
-		digit /= 10;
-		c++;
-	}
-
-	return c;
-}
 
 int main(int args, char** argv)
 {
@@ -33,26 +19,11 @@ int main(int args, char** argv)
 	int iteration_count = 100;
 	bool updated;
 
+
 	sf::Font roboto;
 	roboto.loadFromFile("Roboto-Medium.ttf");
 
-	int mathPoints1Static[][2] = {
-		{ 13, 1 },
-		{ 14, 1 },
-		{ 15, 2 },
-		{ 16, 1 },
-		{ 17, 1 }
-	};
-
-	vector<vector<int>> mathPoints1(5);
-	for (int i = 0; i < 5; i++)
-	{
-		vector<int> el(2);
-		el[0] = mathPoints1Static[i][0];
-		el[1] = mathPoints1Static[i][1];
-
-		mathPoints1[i] = el;
-	}
+	vector<vector<int>> mathData;
 
 	sf::Color backColor(38, 50, 56);
 
@@ -67,12 +38,12 @@ int main(int args, char** argv)
 
 	Poligon poligon(window, roboto);
 
-	Poligon mathPoligon1(window, roboto);
-	mathPoligon1.setMainParams(mathPoints1, 6, 2);
-	mathPoligon1.setBackColor(backColor);
-	mathPoligon1.showLabels = false;
-	mathPoligon1.lineColor = sf::Color::Color(33, 150, 243);
-	mathPoligon1.update();
+	Poligon math_poligon(window, roboto);
+	math_poligon.setMainParams(mathData, 1, 2);
+	math_poligon.setBackColor(backColor);
+	math_poligon.showLabels = false;
+	math_poligon.lineColor = sf::Color::Color(33, 150, 243);
+	math_poligon.update();
 
 	sf::Text calculating("Calculating...", roboto);
 	calculating.setPosition(window.getSize().x / 2, window.getSize().y / 2);
@@ -87,25 +58,18 @@ int main(int args, char** argv)
 	iteration_count_text.setCharacterSize(18);
 	iteration_count_text.setPosition(10, 35);
 
-	/*Poligon mathPoligon2(window);
-	mathPoligon2.setMainParams(mathPoints1, 13, 2);
-	mathPoligon2.setBackColor(backColor);
-	mathPoligon2.showLabels = false;
-	mathPoligon2.lineColor = sf::Color::Color(100, 100, 100);
-	mathPoligon2.update();*/
-
-
 	sf::Clock clock;
 
 	sf::Thread thread(
 		[
+			&mathData,
 			&clock,
 			&depth_text,
 			&iteration_count_text,
 			&updated,
 			&backColor,
 			&poligon,
-			&mathPoligon1,
+			&math_poligon,
 			&iteration_count,
 			&depth,
 			&data,
@@ -117,7 +81,8 @@ int main(int args, char** argv)
 		cout << "Calculating..." << endl;
 		
 		clock.restart();
-
+		// if depth didn't change
+		mathData = calcDataAnalytically(depth);
 		sumArray = doExperiment(depth, iteration_count);
 		data = experiment_handler(sumArray);
 
@@ -128,17 +93,6 @@ int main(int args, char** argv)
 		cout << "Depth: " << depth << endl;
 		cout << "Iteration count: " << iteration_count << endl;
 		cout << "Time of calculating: " << calculatingTime.asMilliseconds() << endl;
-
-		float max = 0;
-		float min = numeric_limits<float>::max();
-
-		for (auto& num : data)
-		{
-			if (num[1] > max)
-				max = num[1];
-			if (num[1] < min)
-				min = num[1];
-		}
 
 		vector<double> interval_data;
 		vector<vector<int>> idata;
@@ -170,7 +124,29 @@ int main(int args, char** argv)
 				poligon.isInterval = false;
 			current_data = data;
 		}
-			
+
+		float max = 0;
+		float min = numeric_limits<float>::max();
+
+		for (auto& num : data)
+		{
+			if (num[1] > max)
+				max = num[1];
+			if (num[1] < min)
+				min = num[1];
+		}
+
+		float mathMax = 0;
+
+		for (auto& num : mathData)
+		{
+			if (num[1] > mathMax)
+				mathMax = num[1];
+		}
+		
+		math_poligon.setMainParams(mathData, 1, mathMax);
+		math_poligon.update();
+
 		poligon.setMainParams(current_data, iteration_count, max);
 		poligon.setBackColor(backColor);
 		poligon.update();
@@ -185,18 +161,21 @@ int main(int args, char** argv)
 
 		t.add("Sum");
 		t.add("Freq %");
+		t.add("Math %");
 		t.endOfRow();
 
-		for (auto& num : current_data)
+		for (int i = 0; i < current_data.size(); i++)
 		{
-			float n = round((num[1] * 100.0 / iteration_count) * 100) / 100;
+			float n = round((current_data[i][1] * 100.f / iteration_count) * 100.f) / 100.f;
+			float n2;
+			if (depth <= 2)
+				n2 = mathData[i][1] * 100.f / calcCountBranches(depth);
+			else
+				n2 = 0;
 
-			stringstream stream;
-			stream << fixed << setprecision(2) << n;
-			string s = stream.str();
-
-			t.add(to_string(num[0]));
-			t.add(s + "%");
+			t.add(to_string(current_data[i][0]));
+			t.add(toString(n, 2) + "%");
+			t.add(toString(n2, 2));
 			t.endOfRow();
 		}
 
@@ -220,7 +199,7 @@ int main(int args, char** argv)
 			case sf::Event::Resized:
 				window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
 				poligon.update();
-				mathPoligon1.update();
+				math_poligon.update();
 				break;
 			case sf::Event::KeyPressed:
 				switch (event.key.code) {
@@ -258,8 +237,8 @@ int main(int args, char** argv)
 
 		window.clear(backColor);
 		window.pushGLStates();
-		if (depth == 1)
-			mathPoligon1.render();
+		if (depth <= 2)
+			math_poligon.render();
 		if (updated)
 			poligon.render();
 		else

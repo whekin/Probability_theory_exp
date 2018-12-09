@@ -22,13 +22,13 @@ void Poligon::update()
 	float scaleY = 1.f;
 
 	if (isScaleY)
-		scaleY = 100.f / (max * 100.f / iteration_count);
+		scaleY = 100.f / (max * 100.f);
 
 	for (int i = 0; i < data.size(); i++)
 	{
 		adaptiveData[i] = sf::Vector2f(
 			((data[i][0] - data.front()[0]) * frame.x / (data.back()[0] - data.front()[0])) + margin,
-			(frame.y - scaleY * ((data[i][1] * 100.f / iteration_count) * frame.y / 100.f) + margin)
+			(frame.y - scaleY * ((data[i][1] * 100.f) * frame.y / 100.f) + margin)
 			);
 
 		newLines[i].position = adaptiveData[i];
